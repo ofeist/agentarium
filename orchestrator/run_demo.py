@@ -37,14 +37,42 @@ def register_agents() -> None:
         {
             "name": "reader-agent",
             "version": "0.1.0",
+            "description": "Reads inline CSV text and returns a normalized table artifact.",
             "endpoint": READER_URL,
             "capabilities": ["read.tabular"],
+            "interaction_mode": "callable",
+            "system_prompt": "Parse inline CSV into a structured table artifact.",
+            "input_schema": {
+                "type": "csv_text",
+                "description": "Inline CSV text with a header row.",
+            },
+            "output_schema": {
+                "artifact_type": "table",
+                "description": "Columns, rows, and row-count metadata.",
+            },
+            "tool_refs": [],
+            "model": "none",
+            "limits": {"timeout": 10, "max_steps": 1},
         },
         {
             "name": "math-agent",
             "version": "0.1.0",
+            "description": "Computes basic numeric metrics from table artifacts.",
             "endpoint": MATH_URL,
             "capabilities": ["analyze.basic-math"],
+            "interaction_mode": "callable",
+            "system_prompt": "Analyze numeric columns in a table artifact.",
+            "input_schema": {
+                "artifact_type": "table",
+                "description": "Structured table artifact from reader-agent.",
+            },
+            "output_schema": {
+                "artifact_type": "analysis",
+                "description": "Row count, numeric column metrics, and simple findings.",
+            },
+            "tool_refs": [],
+            "model": "none",
+            "limits": {"timeout": 10, "max_steps": 1},
         },
     ]
     for agent in agents:

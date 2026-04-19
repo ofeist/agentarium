@@ -65,13 +65,26 @@ Responsibility:
 Each agent record contains only the minimum needed for discovery:
 - `name`
 - `version`
+- `description`
 - `endpoint`
 - `capabilities`
+- `interaction_mode`
 
-This keeps the MVP simple while leaving a clean path to richer metadata later.
+The registry record also carries minimal agent configuration:
+- `system_prompt`
+- `input_schema`
+- `output_schema`
+- `tool_refs`
+- `model`
+- `limits`
+
+Registry metadata describes how the agent is found and invoked.
+Agent configuration describes how the agent should behave at runtime.
 
 Registration stores the agent base endpoint URL, not the `/invoke` path.
 Capability search returns a list of matching agents.
+For now, `interaction_mode` is descriptive metadata only: `callable`, `conversational`, or `both`.
+The current runtime only invokes callable HTTP agents.
 
 ## Minimal artifact contract
 
@@ -81,8 +94,25 @@ Agent registration:
 {
   "name": "reader-agent",
   "version": "0.1.0",
+  "description": "Reads inline CSV text and returns a normalized table artifact.",
   "endpoint": "http://reader-agent:8001",
-  "capabilities": ["read.tabular"]
+  "capabilities": ["read.tabular"],
+  "interaction_mode": "callable",
+  "system_prompt": "Parse inline CSV into a structured table artifact.",
+  "input_schema": {
+    "type": "csv_text",
+    "description": "Inline CSV text with a header row."
+  },
+  "output_schema": {
+    "artifact_type": "table",
+    "description": "Columns, rows, and row-count metadata."
+  },
+  "tool_refs": [],
+  "model": "none",
+  "limits": {
+    "timeout": 10,
+    "max_steps": 1
+  }
 }
 ```
 
