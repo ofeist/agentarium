@@ -11,11 +11,11 @@ tasks:
     next_action: "Completed"
   - id: "TASK-0002"
     title: "Make agent configuration explicit"
-    status: "review"
+    status: "done"
     owner: "builder-organizer-a"
     participants:
       - "builder-organizer-a"
     branch: "feature/task-0002-agent-configuration"
     worktree: "worktrees/agentarium-task-0002-builder-organizer-a"
-    next_actor: "reviewer-1"
-    next_action: "Review TASK-0002 implementation"
+    next_actor: null
+    next_action: "Completed"
