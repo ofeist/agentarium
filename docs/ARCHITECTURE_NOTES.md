@@ -6,7 +6,7 @@ This note captures the current `agentarium` MVP architecture and the immediate d
 
 The current MVP has five moving parts:
 
-- registry: FastAPI service with in-memory agent registration, listing, and capability search.
+- registry: FastAPI service with in-memory agent registration, listing, capability search, and explicit agent configuration fields.
 - reader-agent: FastAPI service that accepts inline CSV and returns a normalized JSON table artifact.
 - math-agent: FastAPI service that accepts a table artifact and returns simple numeric metrics and findings.
 - orchestrator: one-shot Python script that registers agents, resolves them by capability, invokes them over HTTP, and prints the final artifact.
@@ -14,7 +14,7 @@ The current MVP has five moving parts:
 
 The flow is intentionally small:
 
-1. orchestrator registers agent base endpoint URLs and capabilities in the registry
+1. orchestrator registers agent base endpoint URLs, capabilities, descriptive interaction mode, and minimal config in the registry
 2. orchestrator searches the registry by capability
 3. orchestrator invokes the returned agent endpoint over HTTP
 4. reader-agent returns a JSON table artifact
@@ -31,13 +31,15 @@ The flow is intentionally small:
 
 This does not validate production deployment, multi-tenant registries, remote agents, auth, ranking, persistence, or generalized interoperability.
 
-## Minimal Future Agent Configuration
+## Minimal Agent Configuration
 
-The likely next step is to make agent identity and configuration a first-class registry/runtime concept. A minimal future agent configuration should include:
+Agent identity and configuration are now represented directly in the registry record. The current minimal fields are:
 
 - `name`
 - `version`
 - `description`
+- `endpoint`
+- `interaction_mode`
 - `system_prompt`
 - `capabilities`
 - `input_schema`
@@ -48,7 +50,10 @@ The likely next step is to make agent identity and configuration a first-class r
 
 The prompt is part of agent configuration, but it should not be the whole agent identity. A useful agent record needs to describe what the agent is, what it can do, what it expects, what it returns, what tools or model it depends on, and what runtime limits apply.
 
-The current MVP only stores `name`, `version`, `endpoint`, and `capabilities`. The richer configuration above is intended next direction, not implemented behavior.
+Registry metadata fields are `name`, `version`, `description`, `capabilities`, `interaction_mode`, and `endpoint`.
+Agent config fields are `system_prompt`, `input_schema`, `output_schema`, `tool_refs`, `model`, and `limits`.
+
+For this slice, `input_schema` and `output_schema` are simple descriptive objects, not full JSON Schema. `model` is a simple string.
 
 ## Interaction Modes
 
@@ -60,7 +65,7 @@ Not all agents should expose the same interaction shape. A simple initial model 
 
 Worker agents are usually `callable`. Some specialist agents may be `conversational` when iterative clarification is central to their role. A front or manager agent may expose conversation to a user while delegating internally to callable worker agents.
 
-The current MVP implements only callable HTTP agents.
+The current MVP implements only callable HTTP agents. `interaction_mode` is descriptive metadata only; it does not introduce conversational runtime behavior.
 
 ## Architecture Skeleton / Direction
 
@@ -68,22 +73,20 @@ Already implemented:
 
 - agent registry with in-memory storage
 - HTTP agent runtime for the two MVP services
-- minimal agent registration contract
+- explicit agent registration/configuration contract
 - JSON contracts/artifacts for table and analysis payloads
 - orchestrator-driven stack composition
 - Docker Compose as the local runtime wrapper
 
 Intended next:
 
-- agent configuration as a first-class concept
-- explicit input and output schemas in agent records
-- clearer runtime limits and model/tool references
 - more precise artifact contracts as use cases require them
+- clearer use of the config fields by actual agent runtimes
 
 Still open / not yet decided:
 
 - how agent configuration is stored and versioned
-- how runtime state differs from registry metadata
+- how runtime state should evolve separately from registry metadata
 - how to select among multiple agents with the same capability
 - how to represent larger inputs, binary data, streaming, or external object references
 - whether a future input abstraction should cover filesystem, S3, HTTP, or other sources

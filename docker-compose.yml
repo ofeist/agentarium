@@ -18,6 +18,7 @@ services:
 
   orchestrator:
     build: ./orchestrator
+    pull_policy: build
     profiles:
       - demo
     depends_on:

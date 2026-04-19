@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any, Literal
 from urllib.parse import urlparse
 
 from fastapi import FastAPI, Query
@@ -6,12 +6,30 @@ from pydantic import BaseModel, Field, field_validator
 
 app = FastAPI(title="agentarium-registry")
 
+InteractionMode = Literal["callable", "conversational", "both"]
+
+
+class AgentLimits(BaseModel):
+    timeout: int | None = Field(default=None, gt=0)
+    max_steps: int | None = Field(default=None, gt=0)
+
 
 class AgentRegistration(BaseModel):
+    # Registry metadata fields describe how the agent is discovered and invoked.
     name: str = Field(min_length=1)
     version: str = Field(min_length=1)
+    description: str = Field(min_length=1)
     endpoint: str = Field(min_length=1)
     capabilities: list[str] = Field(min_length=1)
+    interaction_mode: InteractionMode = "callable"
+
+    # Agent config fields describe how the agent should behave at runtime.
+    system_prompt: str = Field(min_length=1)
+    input_schema: dict[str, Any] = Field(default_factory=dict)
+    output_schema: dict[str, Any] = Field(default_factory=dict)
+    tool_refs: list[str] = Field(default_factory=list)
+    model: str = Field(min_length=1)
+    limits: AgentLimits = Field(default_factory=AgentLimits)
 
     @field_validator("endpoint")
     @classmethod
@@ -30,6 +48,11 @@ class AgentRegistration(BaseModel):
         if not cleaned:
             raise ValueError("at least one capability is required")
         return cleaned
+
+    @field_validator("tool_refs")
+    @classmethod
+    def validate_tool_refs(cls, value: list[str]) -> list[str]:
+        return [tool_ref.strip() for tool_ref in value if tool_ref.strip()]
 
 
 AgentRecord = AgentRegistration
