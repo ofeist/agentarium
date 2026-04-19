@@ -16,6 +16,11 @@ services:
     ports:
       - "8002:8002"
 
+  report-writer-agent:
+    build: ./agents/report-writer-agent
+    ports:
+      - "8003:8003"
+
   orchestrator:
     build: ./orchestrator
     pull_policy: build
@@ -25,7 +30,9 @@ services:
       - registry
       - reader-agent
       - math-agent
+      - report-writer-agent
     environment:
       REGISTRY_URL: http://registry:8000
       READER_URL: http://reader-agent:8001
       MATH_URL: http://math-agent:8002
+      REPORT_WRITER_URL: http://report-writer-agent:8003

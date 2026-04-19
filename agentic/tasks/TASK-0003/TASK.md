@@ -6,7 +6,7 @@
 Use the next available `TASK-####` identifier from the existing set under `agentic/tasks/` whose basename matches `TASK-####` or starts with `TASK-####-`.
 
 ## Status
-`in_progress`
+`review`
 
 When a task is first opened, start at `draft`. Move to `ready` only after explicit approval to begin implementation. Move to `in_progress` only when Builder-Organizer actually begins execution. Use `done` only when the task is actually complete. When a task reaches `done`, clear the task-level `next_actor` in `tasks.yaml` to `null`.
 
@@ -157,7 +157,7 @@ Expected verification, once approved:
 ## Coordination Notes
 Runtime coordination belongs in `state.yaml`, `tasks.yaml`, and task-local handoff files.
 
-Implementation is in progress within the locked report-writer-agent scope.
+Implementation completed within the locked report-writer-agent scope and is ready for review.
 
 ## Open Questions
 Resolved for this slice:
