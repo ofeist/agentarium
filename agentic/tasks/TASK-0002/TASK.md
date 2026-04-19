@@ -54,10 +54,33 @@ Intended minimal future agent configuration:
 - `model`
 - `limits`, for example `timeout` and `max_steps`
 
+For this slice:
+- `system_prompt` is stored directly in the registry record
+- `input_schema` and `output_schema` are simple descriptive objects, not full JSON Schema
+- `model` is a simple string
+
+Registry metadata fields:
+- `name`
+- `version`
+- `description`
+- `capabilities`
+- `interaction_mode`
+- `endpoint`
+
+Agent config fields:
+- `system_prompt`
+- `input_schema`
+- `output_schema`
+- `tool_refs`
+- `model`
+- `limits`
+
 Interaction modes to include:
 - `callable`
 - `conversational`
 - `both`
+
+For TASK-0002, `interaction_mode` is descriptive metadata only. It must not introduce conversational runtime behavior.
 
 Architectural principles to preserve:
 - prompt is part of agent configuration
@@ -142,11 +165,10 @@ Runtime coordination belongs in `state.yaml`, `tasks.yaml`, and task-local hando
 This task is currently draft only. Do not start implementation until explicit approval moves it to `ready`.
 
 ## Open Questions
-- Should `system_prompt` be stored directly in the registry record for the next slice, or nested under an agent config object?
-- Should `input_schema` and `output_schema` be opaque JSON schema fragments for now, or simpler descriptive objects?
-- Should `model` be a string only in this slice, or a small object?
-
-These questions should be resolved before moving to implementation.
+Resolved for this slice:
+- `system_prompt` is stored directly in the registry record
+- `input_schema` and `output_schema` use simple descriptive objects, not full JSON Schema
+- `model` is a simple string
 
 ## Rollout Notes
 Local-only MVP slice. No production rollout.
