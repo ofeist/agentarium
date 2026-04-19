@@ -21,11 +21,11 @@ tasks:
     next_action: "Completed"
   - id: "TASK-0003"
     title: "Add a third agent to validate a richer 3-agent stack"
-    status: "ready"
+    status: "in_progress"
     owner: "builder-organizer-a"
     participants:
       - "builder-organizer-a"
     branch: "feature/task-0003-report-writer-agent"
     worktree: "worktrees/agentarium-task-0003-builder-organizer-a"
     next_actor: "builder-organizer-a"
-    next_action: "Begin implementation"
+    next_action: "Implement locked report-writer-agent scope"
