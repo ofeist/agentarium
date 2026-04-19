@@ -9,3 +9,13 @@ tasks:
     worktree: "worktrees/agentarium-task-0001-builder-organizer-a"
     next_actor: null
     next_action: "Completed"
+  - id: "TASK-0002"
+    title: "Make agent configuration explicit"
+    status: "draft"
+    owner: "builder-organizer-a"
+    participants:
+      - "builder-organizer-a"
+    branch: "feature/task-0002-agent-configuration"
+    worktree: "worktrees/agentarium-task-0002-builder-organizer-a"
+    next_actor: null
+    next_action: "Await explicit approval to move task to ready"
