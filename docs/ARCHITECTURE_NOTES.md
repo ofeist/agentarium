@@ -9,6 +9,7 @@ The current MVP has five moving parts:
 - registry: FastAPI service with in-memory agent registration, listing, capability search, and explicit agent configuration fields.
 - reader-agent: FastAPI service that accepts inline CSV and returns a normalized JSON table artifact.
 - math-agent: FastAPI service that accepts a table artifact and returns simple numeric metrics and findings.
+- report-writer-agent: FastAPI service that accepts an analysis artifact and returns a concise structured report artifact.
 - orchestrator: one-shot Python script that registers agents, resolves them by capability, invokes them over HTTP, and prints the final artifact.
 - Docker Compose: local runtime wrapper for starting the services and running the orchestrator.
 
@@ -20,12 +21,15 @@ The flow is intentionally small:
 4. reader-agent returns a JSON table artifact
 5. orchestrator passes that artifact to math-agent
 6. math-agent returns a JSON analysis artifact
+7. orchestrator searches the registry for `report.write`
+8. orchestrator passes the analysis artifact to report-writer-agent
+9. report-writer-agent returns a JSON report artifact
 
 ## What The MVP Has Validated
 
 - agents can be registered with minimal metadata
 - agents can be discovered by capability
-- a small registry-driven flow can chain multiple agents
+- a small registry-driven flow can chain three callable agents
 - JSON artifact handoff works well for the current structured-data slice
 - Docker Compose is enough as the first local multi-service runtime wrapper
 
@@ -72,9 +76,10 @@ The current MVP implements only callable HTTP agents. `interaction_mode` is desc
 Already implemented:
 
 - agent registry with in-memory storage
-- HTTP agent runtime for the two MVP services
+- HTTP agent runtime for the MVP services
 - explicit agent registration/configuration contract
 - JSON contracts/artifacts for table and analysis payloads
+- JSON report artifact for the final presentation/output layer
 - orchestrator-driven stack composition
 - Docker Compose as the local runtime wrapper
 

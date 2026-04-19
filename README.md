@@ -15,11 +15,11 @@ It proves one small but important thing:
 
 Demonstrate this end-to-end flow:
 
-1. Register two agents in a registry.
+1. Register three agents in a registry.
 2. Search the registry by capability.
 3. Invoke the matching agent over HTTP.
-4. Pass the output artifact from one agent to another.
-5. Produce a final result.
+4. Pass output artifacts from one agent to the next.
+5. Produce a final report artifact.
 
 ## MVP scope
 
@@ -27,6 +27,7 @@ Included:
 - a small registry service
 - a `reader-agent`
 - a `math-agent`
+- a `report-writer-agent`
 - a simple orchestrator script
 - one sample CSV file
 - Docker Compose for local startup
@@ -59,6 +60,14 @@ Capability:
 Responsibility:
 - accept a normalized tabular artifact
 - compute safe basic numeric metrics and simple findings
+
+### `report-writer-agent`
+Capability:
+- `report.write`
+
+Responsibility:
+- accept an analysis artifact
+- return a concise structured report artifact
 
 ## Registry model
 
@@ -155,6 +164,30 @@ Math agent output:
 }
 ```
 
+Report writer output:
+
+```json
+{
+  "artifact_type": "report",
+  "summary": "Analyzed 2 rows across 1 numeric columns.",
+  "sections": [
+    {
+      "title": "Key Findings",
+      "content": "Column sales has average 90 across 2 numeric values."
+    },
+    {
+      "title": "Column: sales",
+      "content": "count=2, sum=180, average=90, min=80, max=100"
+    }
+  ],
+  "metadata": {
+    "source_artifact_type": "analysis",
+    "row_count": 2,
+    "numeric_column_count": 1
+  }
+}
+```
+
 ## Local run
 
 Start the three long-running services:
@@ -169,7 +202,7 @@ In another terminal, run the registry-driven demo:
 docker compose run --rm orchestrator
 ```
 
-The orchestrator registers `reader-agent` and `math-agent`, finds them through registry capability lookup, sends inline CSV to the reader, passes the table artifact to the math agent, and prints the final analysis artifact.
+The orchestrator registers `reader-agent`, `math-agent`, and `report-writer-agent`, finds each one through registry capability lookup, sends inline CSV to the reader, passes the table artifact to the math agent, passes the analysis artifact to the report writer, and prints the final report artifact.
 
 Stop the local stack:
 

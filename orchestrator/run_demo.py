@@ -8,6 +8,7 @@ import requests
 REGISTRY_URL = os.getenv("REGISTRY_URL", "http://localhost:8000").rstrip("/")
 READER_URL = os.getenv("READER_URL", "http://localhost:8001").rstrip("/")
 MATH_URL = os.getenv("MATH_URL", "http://localhost:8002").rstrip("/")
+REPORT_WRITER_URL = os.getenv("REPORT_WRITER_URL", "http://localhost:8003").rstrip("/")
 
 DEMO_CSV = """region,sales,orders
 A,100,4
@@ -74,6 +75,26 @@ def register_agents() -> None:
             "model": "none",
             "limits": {"timeout": 10, "max_steps": 1},
         },
+        {
+            "name": "report-writer-agent",
+            "version": "0.1.0",
+            "description": "Formats analysis artifacts into concise report artifacts.",
+            "endpoint": REPORT_WRITER_URL,
+            "capabilities": ["report.write"],
+            "interaction_mode": "callable",
+            "system_prompt": "Format analysis artifacts into deterministic report artifacts.",
+            "input_schema": {
+                "artifact_type": "analysis",
+                "description": "Analysis artifact from math-agent.",
+            },
+            "output_schema": {
+                "artifact_type": "report",
+                "description": "Summary, sections, and report metadata.",
+            },
+            "tool_refs": [],
+            "model": "none",
+            "limits": {"timeout": 10, "max_steps": 1},
+        },
     ]
     for agent in agents:
         request_json("POST", f"{REGISTRY_URL}/agents", json=agent)
@@ -90,6 +111,7 @@ def main() -> None:
     wait_for_service("registry", REGISTRY_URL)
     wait_for_service("reader-agent", READER_URL)
     wait_for_service("math-agent", MATH_URL)
+    wait_for_service("report-writer-agent", REPORT_WRITER_URL)
 
     register_agents()
 
@@ -107,11 +129,19 @@ def main() -> None:
         json=table_artifact,
     )
 
+    report_writer_agent = find_agent("report.write")
+    report_artifact = request_json(
+        "POST",
+        f"{report_writer_agent['endpoint']}/invoke",
+        json=analysis_artifact,
+    )
+
     print("agentarium MVP demo complete")
     print(f"reader-agent endpoint: {reader_agent['endpoint']}")
     print(f"math-agent endpoint: {math_agent['endpoint']}")
-    print("final analysis artifact:")
-    print(json.dumps(analysis_artifact, indent=2, sort_keys=True))
+    print(f"report-writer-agent endpoint: {report_writer_agent['endpoint']}")
+    print("final report artifact:")
+    print(json.dumps(report_artifact, indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
