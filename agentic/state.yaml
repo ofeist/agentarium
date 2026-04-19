@@ -1,0 +1,13 @@
+session:
+  objective: "Await task opening"
+  updated_at: "2026-04-01T12:00:00+02:00"
+  coordination_mode: "single-owner"
+  parallelism:
+    mode: "serial"
+    max_active_tasks: 1
+    max_agents_per_task: 1
+
+active_roles: []
+
+next_actor: "builder-organizer-a"
+blockers: []

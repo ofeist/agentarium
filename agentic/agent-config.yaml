@@ -1,0 +1,18 @@
+roles:
+  - role: "builder-organizer"
+    enabled: true
+    max_agents: 1
+    actor_naming: "builder-organizer-{n}"
+    prompt: "agentic/prompts/BUILDER_ORGANIZER_PROMPT.txt"
+
+  - role: "reviewer"
+    enabled: false
+    max_agents: 0
+    actor_naming: "reviewer-{n}"
+    prompt: "agentic/prompts/REVIEWER_PROMPT.txt"
+
+  - role: "qa"
+    enabled: false
+    max_agents: 0
+    actor_naming: "qa-{n}"
+    prompt: "agentic/prompts/QA_PROMPT.txt"
