@@ -1,0 +1,18 @@
+version: "3.9"
+name: agentarium
+
+services:
+  registry:
+    build: ./registry
+    ports:
+      - "8000:8000"
+
+  reader-agent:
+    build: ./agents/reader-agent
+    ports:
+      - "8001:8001"
+
+  math-agent:
+    build: ./agents/math-agent
+    ports:
+      - "8002:8002"
