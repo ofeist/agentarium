@@ -1,1 +1,11 @@
-tasks: []
+tasks:
+  - id: "TASK-0001"
+    title: "Build first working MVP"
+    status: "draft"
+    owner: "builder-organizer-a"
+    participants:
+      - "builder-organizer-a"
+    branch: "feature/task-0001-working-mvp"
+    worktree: "worktrees/agentarium-task-0001-builder-organizer-a"
+    next_actor: null
+    next_action: "Await explicit approval to move task to ready"
