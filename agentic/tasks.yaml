@@ -1,11 +1,11 @@
 tasks:
   - id: "TASK-0001"
     title: "Build first working MVP"
-    status: "in_progress"
+    status: "done"
     owner: "builder-organizer-a"
     participants:
       - "builder-organizer-a"
     branch: "feature/task-0001-working-mvp"
     worktree: "worktrees/agentarium-task-0001-builder-organizer-a"
-    next_actor: "builder-organizer-a"
-    next_action: "Implement locked MVP scope"
+    next_actor: null
+    next_action: "Completed"

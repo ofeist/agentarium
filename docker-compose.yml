@@ -1,4 +1,3 @@
-version: "3.9"
 name: agentarium
 
 services:
@@ -16,3 +15,16 @@ services:
     build: ./agents/math-agent
     ports:
       - "8002:8002"
+
+  orchestrator:
+    build: ./orchestrator
+    profiles:
+      - demo
+    depends_on:
+      - registry
+      - reader-agent
+      - math-agent
+    environment:
+      REGISTRY_URL: http://registry:8000
+      READER_URL: http://reader-agent:8001
+      MATH_URL: http://math-agent:8002

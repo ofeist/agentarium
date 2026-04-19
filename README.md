@@ -30,6 +30,7 @@ Included:
 - a simple orchestrator script
 - one sample CSV file
 - Docker Compose for local startup
+- small service-level tests
 
 Explicitly excluded for now:
 - A2A implementation
@@ -48,7 +49,7 @@ Capability:
 - `read.tabular`
 
 Responsibility:
-- accept CSV input or a file path
+- accept inline CSV text
 - return a normalized tabular artifact
 
 ### `math-agent`
@@ -57,7 +58,7 @@ Capability:
 
 Responsibility:
 - accept a normalized tabular artifact
-- compute a small summary (sum, average, min, max, count)
+- compute safe basic numeric metrics and simple findings
 
 ## Registry model
 
@@ -69,17 +70,35 @@ Each agent record contains only the minimum needed for discovery:
 
 This keeps the MVP simple while leaving a clean path to richer metadata later.
 
+Registration stores the agent base endpoint URL, not the `/invoke` path.
+Capability search returns a list of matching agents.
+
 ## Minimal artifact contract
+
+Agent registration:
+
+```json
+{
+  "name": "reader-agent",
+  "version": "0.1.0",
+  "endpoint": "http://reader-agent:8001",
+  "capabilities": ["read.tabular"]
+}
+```
 
 Reader output:
 
 ```json
 {
   "artifact_type": "table",
-  "data": [
+  "columns": ["region", "sales"],
+  "rows": [
     {"region": "A", "sales": 100},
     {"region": "B", "sales": 80}
-  ]
+  ],
+  "metadata": {
+    "row_count": 2
+  }
 }
 ```
 
@@ -88,14 +107,58 @@ Math agent output:
 ```json
 {
   "artifact_type": "analysis",
-  "result": {
-    "count": 2,
-    "sum_sales": 180,
-    "avg_sales": 90,
-    "min_sales": 80,
-    "max_sales": 100
-  }
+  "metrics": {
+    "row_count": 2,
+    "numeric_columns": {
+      "sales": {
+        "count": 2,
+        "sum": 180,
+        "average": 90,
+        "min": 80,
+        "max": 100
+      }
+    }
+  },
+  "findings": [
+    "Column sales has average 90 across 2 numeric values."
+  ]
 }
+```
+
+## Local run
+
+Start the three long-running services:
+
+```bash
+docker compose up --build
+```
+
+In another terminal, run the registry-driven demo:
+
+```bash
+docker compose run --rm orchestrator
+```
+
+The orchestrator registers `reader-agent` and `math-agent`, finds them through registry capability lookup, sends inline CSV to the reader, passes the table artifact to the math agent, and prints the final analysis artifact.
+
+Stop the local stack:
+
+```bash
+docker compose down
+```
+
+## Tests
+
+Install local test dependencies:
+
+```bash
+python3 -m pip install -r requirements-dev.txt
+```
+
+Run the service-level tests:
+
+```bash
+pytest
 ```
 
 ## Why Docker Compose
