@@ -36,6 +36,11 @@ The next slice should test:
 - whether a third agent can consume the previous artifact and produce a final presentation/output layer
 - whether the registry remains a clean discovery/composition mechanism as the stack grows slightly
 - whether the current agent config/metadata model remains usable with one more callable specialist agent
+- one more registry-driven handoff
+- one more callable specialist agent
+- a richer artifact chain
+
+It should not validate or introduce a generic workflow engine.
 
 ## Scope
 - add one third agent to the runtime stack
@@ -65,6 +70,14 @@ Likely `report-writer-agent` role:
 - produce a concise final report artifact
 - remain simple and deterministic enough for MVP purposes
 
+Report artifact direction:
+- use a small structured `report` artifact
+- include `artifact_type`
+- include `summary`
+- include `sections`
+- include `metadata`
+- keep the artifact MVP-sized
+
 ## Out of Scope
 - A2A
 - MCP
@@ -89,6 +102,7 @@ Likely `report-writer-agent` role:
 ## Constraints
 - keep the new agent simple
 - keep the report writer narrowly scoped to consuming the analysis artifact and producing a final report artifact
+- prefer a formatter-style implementation over broad natural-language generation behavior unless there is a strong reason not to
 - preserve the current registry-driven architecture
 - avoid over-engineering the artifact model
 - keep the stack runnable locally with Docker Compose
@@ -146,11 +160,13 @@ Runtime coordination belongs in `state.yaml`, `tasks.yaml`, and task-local hando
 This task is currently draft only. Do not start implementation until explicit approval moves it to `ready`.
 
 ## Open Questions
-- What is the smallest useful report artifact shape for this slice?
-- Should the report text be a single deterministic string, or should it include structured sections?
-- Which focused test best verifies the updated 3-step flow without adding a broad integration framework?
+Resolved for this slice:
+- the report artifact is a small structured `report` artifact with `artifact_type`, `summary`, `sections`, and `metadata`
+- the report writer should be deterministic and formatter-style, not broad natural-language generation
+- TASK-0003 validates one more registry-driven handoff, one more callable specialist agent, and a richer artifact chain, not a generic workflow engine
 
-These questions should be resolved before moving to implementation.
+Remaining implementation choice:
+- which focused test best verifies the updated 3-step flow without adding a broad integration framework?
 
 ## Rollout Notes
 Local-only MVP slice. No production rollout.
