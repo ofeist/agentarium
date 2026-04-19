@@ -1,6 +1,6 @@
 session:
-  objective: "TASK-0003 opened as draft; awaiting approval to move to ready"
-  updated_at: "2026-04-19T21:36:16+02:00"
+  objective: "TASK-0003 approved and ready for implementation"
+  updated_at: "2026-04-19T21:42:55+02:00"
   coordination_mode: "single-owner"
   parallelism:
     mode: "serial"
@@ -9,5 +9,5 @@ session:
 
 active_roles: []
 
-next_actor: null
+next_actor: "builder-organizer-a"
 blockers: []
