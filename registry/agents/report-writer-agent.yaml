@@ -1,0 +1,19 @@
+apiVersion: agentarium.dev/v0
+kind: Agent
+
+metadata:
+  name: report-writer-agent
+  version: 0.1.0
+
+spec:
+  purpose: Turn structured outputs into a short readable report
+  inputs:
+    - structured_results
+  outputs:
+    - report
+  prompt_ref: prompts/report_writer.md
+  mcp_dependencies: []
+  a2a:
+    role: report-writer
+    exposed: true
+  runtime_type: generic-llm-agent

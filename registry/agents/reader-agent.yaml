@@ -1,0 +1,20 @@
+apiVersion: agentarium.dev/v0
+kind: Agent
+
+metadata:
+  name: reader-agent
+  version: 0.1.0
+
+spec:
+  purpose: Read text input and return a concise extracted answer
+  inputs:
+    - text
+    - question
+  outputs:
+    - answer
+  prompt_ref: prompts/reader.md
+  mcp_dependencies: []
+  a2a:
+    role: reader
+    exposed: true
+  runtime_type: generic-llm-agent
