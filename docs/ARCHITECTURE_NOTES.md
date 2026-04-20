@@ -109,3 +109,104 @@ The project is intentionally not standardizing these yet:
 - persistence
 - ranking or selection among multiple agents
 - filesystem/S3/HTTP unified input abstraction
+
+## Runtime packaging vs agent identity
+
+One important clarification from the current MVP work:
+
+An agent is **not the same thing** as a Docker image.
+
+A Docker image is one possible **runtime/deployment artifact** for an agent, but the registry entry should describe the **agent itself**, not force one packaging model too early.
+
+This distinction matters because the same logical agent may later be run in different ways:
+
+- as a Docker container
+- as a local Python process
+- as a remote service
+- as a generic LLM runtime with prompt/config injection
+- as some future serverless or hosted execution model
+
+So for Agentarium we should keep these layers separate:
+
+- **agent identity** = what the agent is, what it does, what it expects, what it returns
+- **runtime model** = how the agent is executed
+- **deployment artifact** = container image, local process, remote service, etc.
+
+## Why Docker was still the right MVP choice
+
+Starting with Docker Compose was still a good decision.
+
+It solved real early problems immediately:
+
+- network-level communication between agents/services
+- reproducible local execution
+- simple service addressing
+- isolation between runtime components
+- a practical way to stand up a small multi-agent stack
+
+So Docker remains a strong MVP foundation.
+
+But the current view is:
+
+- Docker is a **great runtime/deployment starting point**
+- Docker should **not define the full ontology of what an agent is**
+
+## Likely runtime categories
+
+At the moment, two runtime categories seem useful.
+
+### 1. Packaged agents
+
+These are agents with their own implementation/runtime artifact, for example:
+
+- their own Docker image
+- their own codebase
+- their own service process
+- stronger specialization and more stable behavior
+
+Examples might later include things like:
+
+- PR review agent
+- statistics agent
+- importer agent
+
+### 2. Generic runtime agents
+
+These are agents that run on a shared generic host/runtime and are mainly defined by configuration, for example:
+
+- prompt
+- MCP dependencies
+- A2A exposure/role
+- input/output contract
+- model/runtime settings
+
+This makes lightweight agents easier to create, modify, and share without building a dedicated image each time.
+
+Examples might later include things like:
+
+- reader agent
+- report-writer agent
+- summarizer agent
+
+## Current architectural direction
+
+For now, the registry should continue to store **agents**.
+
+But agent entries should eventually allow different runtime styles, instead of assuming that every agent is packaged the same way.
+
+A useful future direction is to make runtime type explicit, for example with concepts such as:
+
+- `packaged-agent`
+- `generic-llm-agent`
+- possibly later other runtime types
+
+This should be treated as a runtime/deployment concern, not as the core definition of the agent itself.
+
+## Practical implication for next steps
+
+This means the next formalization work should likely include:
+
+- making runtime type explicit in the registry model
+- keeping agent identity separate from deployment artifact
+- supporting both packaged and generic agents in the longer-term design
+- avoiding premature lock-in to "agent = container image"
