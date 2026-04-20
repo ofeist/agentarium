@@ -22,10 +22,13 @@ Each agent must define:
 - `purpose`
 - `inputs`
 - `outputs`
+- `runtime_type`
+
+Optional for current MVP:
+
 - `prompt_ref`
 - `mcp_dependencies`
 - `a2a`
-- `runtime_type`
 
 ## Field meanings
 
@@ -34,10 +37,10 @@ Each agent must define:
 - `purpose`: one clear sentence what the agent does
 - `inputs`: expected inputs
 - `outputs`: returned outputs
-- `prompt_ref`: path to prompt file
-- `mcp_dependencies`: MCP capabilities/services this agent needs
-- `a2a`: whether the agent is exposed to other agents and under which role
 - `runtime_type`: how the agent runs
+- `prompt_ref`: path to prompt file, if applicable
+- `mcp_dependencies`: MCP capabilities/services this agent needs, if any
+- `a2a`: whether the agent is exposed to other agents and under which role, if applicable
 
 ## Runtime types
 
