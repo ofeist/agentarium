@@ -6,7 +6,7 @@
 Use the next available `TASK-####` identifier from the existing set under `agentic/tasks/` whose basename matches `TASK-####` or starts with `TASK-####-`.
 
 ## Status
-`draft`
+`ready`
 
 When a task is first opened, start at `draft`. Move to `ready` only after explicit approval to begin implementation. Move to `in_progress` only when Builder-Organizer actually begins execution. Use `done` only when the task is actually complete. When a task reaches `done`, clear the task-level `next_actor` in `tasks.yaml` to `null`.
 
@@ -137,6 +137,8 @@ Expected verification, once approved:
 Runtime coordination belongs in `state.yaml`, `tasks.yaml`, and task-local handoff files.
 
 This task should stay small and focused on contract clarity, not platform design.
+
+Approved to begin implementation when explicitly started. Approval does not itself start execution.
 
 ## Open Questions
 Questions to resolve before implementation:
