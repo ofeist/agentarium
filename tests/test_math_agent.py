@@ -16,7 +16,11 @@ def test_math_agent_invoke_computes_basic_numeric_metrics():
                 {"region": "A", "sales": 100},
                 {"region": "B", "sales": 80},
             ],
-            "metadata": {"row_count": 2},
+            "metadata": {
+                "row_count": 2,
+                "column_count": 2,
+                "source_format": "csv",
+            },
         },
     )
 
@@ -34,3 +38,9 @@ def test_math_agent_invoke_computes_basic_numeric_metrics():
     assert body["findings"] == [
         "Column sales has average 90 across 2 numeric values."
     ]
+    assert body["metadata"] == {
+        "source_artifact_type": "table",
+        "row_count": 2,
+        "numeric_column_count": 1,
+        "finding_count": 1,
+    }

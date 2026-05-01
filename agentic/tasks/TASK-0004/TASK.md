@@ -6,7 +6,7 @@
 Use the next available `TASK-####` identifier from the existing set under `agentic/tasks/` whose basename matches `TASK-####` or starts with `TASK-####-`.
 
 ## Status
-`ready`
+`review`
 
 When a task is first opened, start at `draft`. Move to `ready` only after explicit approval to begin implementation. Move to `in_progress` only when Builder-Organizer actually begins execution. Use `done` only when the task is actually complete. When a task reaches `done`, clear the task-level `next_actor` in `tasks.yaml` to `null`.
 
@@ -140,11 +140,17 @@ This task should stay small and focused on contract clarity, not platform design
 
 Approved to begin implementation when explicitly started. Approval does not itself start execution.
 
+Implementation was completed on `feature/task-0004-tighten-artifact-contracts`.
+
 ## Open Questions
-Questions to resolve before implementation:
-- which fields should become explicitly required for each current artifact
-- whether any field names should be normalized for consistency without breaking the MVP unnecessarily
-- whether a minimal shared artifact convention belongs only in docs/tests or also in code models
+Resolved in implementation:
+- all three current artifacts keep `artifact_type` and `metadata`
+- `table` metadata now explicitly includes `row_count`, `column_count`, and `source_format`
+- `analysis` metadata now explicitly includes `source_artifact_type`, `row_count`, `numeric_column_count`, and `finding_count`
+- `report` metadata now explicitly includes `source_artifact_type`, `row_count`, `numeric_column_count`, and `section_count`
+- the shared convention is represented both in code models and in concise docs/tests
+
+The slice is implemented and ready for review.
 
 ## Rollout Notes
 Local-only MVP slice. No production rollout.

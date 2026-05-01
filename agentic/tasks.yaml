@@ -31,11 +31,11 @@ tasks:
     next_action: "Completed"
   - id: "TASK-0004"
     title: "Tighten MVP artifact contracts"
-    status: "ready"
+    status: "review"
     owner: "builder-organizer-a"
     participants:
       - "builder-organizer-a"
     branch: "feature/task-0004-tighten-artifact-contracts"
     worktree: "worktrees/agentarium-task-0004-builder-organizer-a"
-    next_actor: null
-    next_action: "Awaiting implementation start"
+    next_actor: "reviewer-1"
+    next_action: "Review TASK-0004 implementation"

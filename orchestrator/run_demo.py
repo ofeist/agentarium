@@ -49,7 +49,7 @@ def register_agents() -> None:
             },
             "output_schema": {
                 "artifact_type": "table",
-                "description": "Columns, rows, and row-count metadata.",
+                "description": "Columns, rows, and metadata with row_count, column_count, and source_format.",
             },
             "tool_refs": [],
             "model": "none",
@@ -69,7 +69,7 @@ def register_agents() -> None:
             },
             "output_schema": {
                 "artifact_type": "analysis",
-                "description": "Row count, numeric column metrics, and simple findings.",
+                "description": "Metrics, findings, and metadata describing row count and numeric coverage.",
             },
             "tool_refs": [],
             "model": "none",
@@ -89,7 +89,7 @@ def register_agents() -> None:
             },
             "output_schema": {
                 "artifact_type": "report",
-                "description": "Summary, sections, and report metadata.",
+                "description": "Summary, sections, and metadata describing the analysis-derived report.",
             },
             "tool_refs": [],
             "model": "none",
