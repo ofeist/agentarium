@@ -20,5 +20,9 @@ def test_reader_agent_invoke_normalizes_inline_csv():
             {"region": "A", "sales": 100},
             {"region": "B", "sales": 80},
         ],
-        "metadata": {"row_count": 2},
+        "metadata": {
+            "row_count": 2,
+            "column_count": 2,
+            "source_format": "csv",
+        },
     }

@@ -29,6 +29,12 @@ def test_report_writer_agent_formats_analysis_artifact():
             "findings": [
                 "Column sales has average 100 across 3 numeric values."
             ],
+            "metadata": {
+                "source_artifact_type": "table",
+                "row_count": 3,
+                "numeric_column_count": 1,
+                "finding_count": 1,
+            },
         },
     )
 
@@ -50,6 +56,7 @@ def test_report_writer_agent_formats_analysis_artifact():
             "source_artifact_type": "analysis",
             "row_count": 3,
             "numeric_column_count": 1,
+            "section_count": 2,
         },
     }
 
@@ -65,9 +72,15 @@ def test_report_writer_agent_rejects_non_analysis_artifact():
         "/invoke",
         json={
             "artifact_type": "table",
-            "metrics": {},
+            "metrics": {"row_count": 0, "numeric_columns": {}},
             "findings": [],
+            "metadata": {
+                "source_artifact_type": "table",
+                "row_count": 0,
+                "numeric_column_count": 0,
+                "finding_count": 0,
+            },
         },
     )
 
-    assert response.status_code == 400
+    assert response.status_code == 422

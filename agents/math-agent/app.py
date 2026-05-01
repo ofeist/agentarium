@@ -1,17 +1,23 @@
 from numbers import Number
-from typing import Any
+from typing import Any, Literal
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
 app = FastAPI(title="math-agent")
 
 
+class TableMetadata(BaseModel):
+    row_count: int = Field(ge=0)
+    column_count: int = Field(ge=0)
+    source_format: Literal["csv"] = "csv"
+
+
 class TableArtifact(BaseModel):
-    artifact_type: str
-    columns: list[str]
+    artifact_type: Literal["table"]
+    columns: list[str] = Field(min_length=1)
     rows: list[dict[str, Any]]
-    metadata: dict[str, Any] = Field(default_factory=dict)
+    metadata: TableMetadata
 
 
 class NumericMetrics(BaseModel):
@@ -22,16 +28,26 @@ class NumericMetrics(BaseModel):
     max: float
 
 
+class AnalysisMetrics(BaseModel):
+    row_count: int = Field(ge=0)
+    numeric_columns: dict[str, NumericMetrics] = Field(default_factory=dict)
+
+
+class AnalysisMetadata(BaseModel):
+    source_artifact_type: Literal["table"] = "table"
+    row_count: int = Field(ge=0)
+    numeric_column_count: int = Field(ge=0)
+    finding_count: int = Field(ge=0)
+
+
 class AnalysisArtifact(BaseModel):
-    artifact_type: str = "analysis"
-    metrics: dict[str, Any]
+    artifact_type: Literal["analysis"] = "analysis"
+    metrics: AnalysisMetrics
     findings: list[str]
+    metadata: AnalysisMetadata
 
 
 def analyze_table(table: TableArtifact) -> AnalysisArtifact:
-    if table.artifact_type != "table":
-        raise HTTPException(status_code=400, detail="artifact_type must be table")
-
     numeric_columns: dict[str, NumericMetrics] = {}
     for column in table.columns:
         values = [
@@ -58,12 +74,18 @@ def analyze_table(table: TableArtifact) -> AnalysisArtifact:
     if not findings:
         findings.append("No numeric columns were found for analysis.")
 
+    row_count = len(table.rows)
     return AnalysisArtifact(
-        metrics={
-            "row_count": len(table.rows),
-            "numeric_columns": numeric_columns,
-        },
+        metrics=AnalysisMetrics(
+            row_count=row_count,
+            numeric_columns=numeric_columns,
+        ),
         findings=findings,
+        metadata=AnalysisMetadata(
+            row_count=row_count,
+            numeric_column_count=len(numeric_columns),
+            finding_count=len(findings),
+        ),
     )
 
 

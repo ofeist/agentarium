@@ -20,6 +20,18 @@ The flow is intentionally small:
 3. invoke them over HTTP
 4. pass JSON artifacts from one agent to the next
 
+## Current artifact conventions
+
+The current MVP artifact contracts stay intentionally small, but they now follow a slightly clearer shared pattern:
+
+- every artifact includes `artifact_type`
+- every artifact includes `metadata`
+- `table` includes `columns`, `rows`, and metadata with `row_count`, `column_count`, and `source_format`
+- `analysis` includes `metrics`, `findings`, and metadata with `source_artifact_type`, `row_count`, `numeric_column_count`, and `finding_count`
+- `report` includes `summary`, `sections`, and metadata with `source_artifact_type`, `row_count`, `numeric_column_count`, and `section_count`
+
+This is still descriptive MVP structure, not a schema framework or standard.
+
 ## What the MVP has validated
 
 So far, the MVP validates that:
@@ -180,4 +192,3 @@ Next formalization work should likely include:
 - keeping agent identity separate from deployment artifact
 - supporting both packaged and generic agents in the longer-term design
 - avoiding premature lock-in to `agent = container image`
-

@@ -1,15 +1,36 @@
-from typing import Any
+from typing import Any, Literal
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
 app = FastAPI(title="report-writer-agent")
 
 
+class NumericMetrics(BaseModel):
+    count: int = Field(ge=0)
+    sum: float
+    average: float
+    min: float
+    max: float
+
+
+class AnalysisMetrics(BaseModel):
+    row_count: int = Field(ge=0)
+    numeric_columns: dict[str, NumericMetrics] = Field(default_factory=dict)
+
+
+class AnalysisMetadata(BaseModel):
+    source_artifact_type: Literal["table"] = "table"
+    row_count: int = Field(ge=0)
+    numeric_column_count: int = Field(ge=0)
+    finding_count: int = Field(ge=0)
+
+
 class AnalysisArtifact(BaseModel):
-    artifact_type: str
-    metrics: dict[str, Any]
+    artifact_type: Literal["analysis"]
+    metrics: AnalysisMetrics
     findings: list[str]
+    metadata: AnalysisMetadata
 
 
 class ReportSection(BaseModel):
@@ -17,11 +38,18 @@ class ReportSection(BaseModel):
     content: str
 
 
+class ReportMetadata(BaseModel):
+    source_artifact_type: Literal["analysis"] = "analysis"
+    row_count: int = Field(ge=0)
+    numeric_column_count: int = Field(ge=0)
+    section_count: int = Field(ge=0)
+
+
 class ReportArtifact(BaseModel):
-    artifact_type: str = "report"
+    artifact_type: Literal["report"] = "report"
     summary: str
-    sections: list[ReportSection]
-    metadata: dict[str, Any] = Field(default_factory=dict)
+    sections: list[ReportSection] = Field(min_length=1)
+    metadata: ReportMetadata
 
 
 def format_number(value: Any) -> str:
@@ -31,14 +59,12 @@ def format_number(value: Any) -> str:
 
 
 def write_report(analysis: AnalysisArtifact) -> ReportArtifact:
-    if analysis.artifact_type != "analysis":
-        raise HTTPException(status_code=400, detail="artifact_type must be analysis")
-
-    row_count = analysis.metrics.get("row_count", 0)
-    numeric_columns = analysis.metrics.get("numeric_columns", {})
+    row_count = analysis.metrics.row_count
+    numeric_columns = analysis.metrics.numeric_columns
+    numeric_column_count = len(numeric_columns)
 
     summary = (
-        f"Analyzed {row_count} rows across {len(numeric_columns)} numeric columns."
+        f"Analyzed {row_count} rows across {numeric_column_count} numeric columns."
     )
 
     sections = [
@@ -53,11 +79,11 @@ def write_report(analysis: AnalysisArtifact) -> ReportArtifact:
             ReportSection(
                 title=f"Column: {column}",
                 content=(
-                    f"count={format_number(metrics.get('count'))}, "
-                    f"sum={format_number(metrics.get('sum'))}, "
-                    f"average={format_number(metrics.get('average'))}, "
-                    f"min={format_number(metrics.get('min'))}, "
-                    f"max={format_number(metrics.get('max'))}"
+                    f"count={format_number(metrics.count)}, "
+                    f"sum={format_number(metrics.sum)}, "
+                    f"average={format_number(metrics.average)}, "
+                    f"min={format_number(metrics.min)}, "
+                    f"max={format_number(metrics.max)}"
                 ),
             )
         )
@@ -65,11 +91,11 @@ def write_report(analysis: AnalysisArtifact) -> ReportArtifact:
     return ReportArtifact(
         summary=summary,
         sections=sections,
-        metadata={
-            "source_artifact_type": analysis.artifact_type,
-            "row_count": row_count,
-            "numeric_column_count": len(numeric_columns),
-        },
+        metadata=ReportMetadata(
+            row_count=row_count,
+            numeric_column_count=numeric_column_count,
+            section_count=len(sections),
+        ),
     )
 
 

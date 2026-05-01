@@ -114,7 +114,7 @@ Agent registration:
   },
   "output_schema": {
     "artifact_type": "table",
-    "description": "Columns, rows, and row-count metadata."
+    "description": "Columns, rows, and metadata with row count, column count, and source format."
   },
   "tool_refs": [],
   "model": "none",
@@ -136,7 +136,9 @@ Reader output:
     {"region": "B", "sales": 80}
   ],
   "metadata": {
-    "row_count": 2
+    "row_count": 2,
+    "column_count": 2,
+    "source_format": "csv"
   }
 }
 ```
@@ -160,7 +162,13 @@ Math agent output:
   },
   "findings": [
     "Column sales has average 90 across 2 numeric values."
-  ]
+  ],
+  "metadata": {
+    "source_artifact_type": "table",
+    "row_count": 2,
+    "numeric_column_count": 1,
+    "finding_count": 1
+  }
 }
 ```
 
@@ -183,14 +191,22 @@ Report writer output:
   "metadata": {
     "source_artifact_type": "analysis",
     "row_count": 2,
-    "numeric_column_count": 1
+    "numeric_column_count": 1,
+    "section_count": 2
   }
 }
 ```
 
+Current artifact conventions:
+- every artifact includes `artifact_type`
+- every artifact includes `metadata`
+- `table` carries `columns`, `rows`, and metadata about row count, column count, and source format
+- `analysis` carries `metrics`, `findings`, and metadata about source type, numeric coverage, and finding count
+- `report` carries `summary`, `sections`, and metadata about the source analysis and rendered section count
+
 ## Local run
 
-Start the three long-running services:
+Start the four long-running services:
 
 ```bash
 docker compose up --build

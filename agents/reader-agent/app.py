@@ -1,8 +1,8 @@
 import csv
 from io import StringIO
-from typing import Any
+from typing import Any, Literal
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 app = FastAPI(title="reader-agent")
@@ -12,11 +12,17 @@ class ReaderRequest(BaseModel):
     csv_text: str = Field(min_length=1)
 
 
+class TableMetadata(BaseModel):
+    row_count: int = Field(ge=0)
+    column_count: int = Field(ge=0)
+    source_format: Literal["csv"] = "csv"
+
+
 class TableArtifact(BaseModel):
-    artifact_type: str = "table"
-    columns: list[str]
+    artifact_type: Literal["table"] = "table"
+    columns: list[str] = Field(min_length=1)
     rows: list[dict[str, Any]]
-    metadata: dict[str, Any]
+    metadata: TableMetadata
 
 
 def coerce_value(value: str) -> Any:
@@ -36,6 +42,9 @@ def coerce_value(value: str) -> Any:
 def parse_csv(csv_text: str) -> TableArtifact:
     reader = csv.DictReader(StringIO(csv_text.strip()))
     columns = reader.fieldnames or []
+    if not columns:
+        raise HTTPException(status_code=400, detail="csv_text must include a header row")
+
     rows = [
         {column: coerce_value(row.get(column, "")) for column in columns}
         for row in reader
@@ -43,7 +52,10 @@ def parse_csv(csv_text: str) -> TableArtifact:
     return TableArtifact(
         columns=columns,
         rows=rows,
-        metadata={"row_count": len(rows)},
+        metadata=TableMetadata(
+            row_count=len(rows),
+            column_count=len(columns),
+        ),
     )
 
 
