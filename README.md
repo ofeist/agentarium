@@ -114,7 +114,7 @@ Agent registration:
   },
   "output_schema": {
     "artifact_type": "table",
-    "description": "Columns, rows, and row-count metadata."
+    "description": "Columns, rows, and metadata with row count, column count, and source format."
   },
   "tool_refs": [],
   "model": "none",
