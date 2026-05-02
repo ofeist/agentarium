@@ -1,19 +1,20 @@
-apiVersion: agentarium.dev/v0
-kind: Agent
-
-metadata:
-  name: report-writer-agent
-  version: 0.1.0
-
-spec:
-  purpose: Turn structured outputs into a short readable report
-  inputs:
-    - structured_results
-  outputs:
-    - report
-  prompt_ref: prompts/report_writer.md
-  mcp_dependencies: []
-  a2a:
-    role: report-writer
-    exposed: true
-  runtime_type: packaged-agent
+name: report-writer-agent
+version: 0.1.0
+description: Formats analysis artifacts into concise report artifacts.
+endpoint: http://report-writer-agent:8003
+capabilities:
+  - report.write
+interaction_mode: callable
+runtime_type: packaged-agent
+system_prompt: Format analysis artifacts into deterministic report artifacts.
+input_schema:
+  artifact_type: analysis
+  description: Analysis artifact from math-agent.
+output_schema:
+  artifact_type: report
+  description: Summary, sections, and metadata describing the analysis-derived report.
+tool_refs: []
+model: none
+limits:
+  timeout: 10
+  max_steps: 1
