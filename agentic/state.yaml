@@ -1,6 +1,6 @@
 session:
-  objective: "TASK-0005 implementation ready for review"
-  updated_at: "2026-05-02T00:30:00+02:00"
+  objective: "No active task"
+  updated_at: "2026-05-02T01:00:00+02:00"
   coordination_mode: "single-owner"
   parallelism:
     mode: "serial"
@@ -9,5 +9,5 @@ session:
 
 active_roles: []
 
-next_actor: "reviewer-1"
+next_actor: null
 blockers: []
