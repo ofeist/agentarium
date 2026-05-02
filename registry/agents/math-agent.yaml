@@ -1,19 +1,20 @@
-apiVersion: agentarium.dev/v0
-kind: Agent
-
-metadata:
-  name: math-agent
-  version: 0.1.0
-
-spec:
-  purpose: Solve simple math tasks from structured input
-  inputs:
-    - expression
-  outputs:
-    - result
-  prompt_ref: prompts/math.md
-  mcp_dependencies: []
-  a2a:
-    role: math
-    exposed: true
-  runtime_type: packaged-agent
+name: math-agent
+version: 0.1.0
+description: Computes basic numeric metrics from table artifacts.
+endpoint: http://math-agent:8002
+capabilities:
+  - analyze.basic-math
+interaction_mode: callable
+runtime_type: packaged-agent
+system_prompt: Analyze numeric columns in a table artifact.
+input_schema:
+  artifact_type: table
+  description: Structured table artifact from reader-agent.
+output_schema:
+  artifact_type: analysis
+  description: Metrics, findings, and metadata describing row count and numeric coverage.
+tool_refs: []
+model: none
+limits:
+  timeout: 10
+  max_steps: 1

@@ -1,20 +1,20 @@
-apiVersion: agentarium.dev/v0
-kind: Agent
-
-metadata:
-  name: reader-agent
-  version: 0.1.0
-
-spec:
-  purpose: Read text input and return a concise extracted answer
-  inputs:
-    - text
-    - question
-  outputs:
-    - answer
-  prompt_ref: prompts/reader.md
-  mcp_dependencies: []
-  a2a:
-    role: reader
-    exposed: true
-  runtime_type: packaged-agent
+name: reader-agent
+version: 0.1.0
+description: Reads inline CSV text and returns a normalized table artifact.
+endpoint: http://reader-agent:8001
+capabilities:
+  - read.tabular
+interaction_mode: callable
+runtime_type: packaged-agent
+system_prompt: Parse inline CSV into a structured table artifact.
+input_schema:
+  type: csv_text
+  description: Inline CSV text with a header row.
+output_schema:
+  artifact_type: table
+  description: Columns, rows, and metadata with row_count, column_count, and source_format.
+tool_refs: []
+model: none
+limits:
+  timeout: 10
+  max_steps: 1
