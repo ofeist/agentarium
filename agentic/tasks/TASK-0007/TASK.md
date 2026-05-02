@@ -6,7 +6,7 @@
 Use the next available `TASK-####` identifier from the existing set under `agentic/tasks/` whose basename matches `TASK-####` or starts with `TASK-####-`.
 
 ## Status
-`review`
+`done`
 
 When a task is first opened, start at `draft`. Move to `ready` only after explicit approval to begin implementation. Move to `in_progress` only when Builder-Organizer actually begins execution. Use `done` only when the task is actually complete. When a task reaches `done`, clear the task-level `next_actor` in `tasks.yaml` to `null`.
 
@@ -155,12 +155,12 @@ Runtime coordination belongs in `state.yaml`, `tasks.yaml`, and task-local hando
 
 This task should make metadata files consistent with the live registry model, not make them executable.
 
-Approved and implemented on `feature/task-0007-normalize-agent-metadata`.
+Approved, implemented, reviewed, and merged from `feature/task-0007-normalize-agent-metadata`.
 
 ## Open Questions
 None. The task was intentionally narrow and is implemented.
 
-Implementation is ready for review.
+Implementation was reviewed, merged, and closed.
 
 ## Rollout Notes
 Local-only metadata normalization. No production rollout.
