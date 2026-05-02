@@ -100,11 +100,23 @@ def register_agents() -> None:
         request_json("POST", f"{REGISTRY_URL}/agents", json=agent)
 
 
-def find_agent(capability: str) -> dict[str, Any]:
-    matches = request_json("GET", f"{REGISTRY_URL}/search", params={"capability": capability})
+def resolve_required_agent(capability: str) -> dict[str, Any]:
+    matches = request_json(
+        "GET",
+        f"{REGISTRY_URL}/search",
+        params={"capability": capability},
+    )
     if not matches:
         raise RuntimeError(f"No agent found for capability {capability}")
     return matches[0]
+
+
+def invoke_agent(agent: dict[str, Any], payload: dict[str, Any]) -> dict[str, Any]:
+    return request_json(
+        "POST",
+        f"{agent['endpoint']}/invoke",
+        json=payload,
+    )
 
 
 def main() -> None:
@@ -115,26 +127,14 @@ def main() -> None:
 
     register_agents()
 
-    reader_agent = find_agent("read.tabular")
-    table_artifact = request_json(
-        "POST",
-        f"{reader_agent['endpoint']}/invoke",
-        json={"csv_text": DEMO_CSV},
-    )
+    reader_agent = resolve_required_agent("read.tabular")
+    table_artifact = invoke_agent(reader_agent, {"csv_text": DEMO_CSV})
 
-    math_agent = find_agent("analyze.basic-math")
-    analysis_artifact = request_json(
-        "POST",
-        f"{math_agent['endpoint']}/invoke",
-        json=table_artifact,
-    )
+    math_agent = resolve_required_agent("analyze.basic-math")
+    analysis_artifact = invoke_agent(math_agent, table_artifact)
 
-    report_writer_agent = find_agent("report.write")
-    report_artifact = request_json(
-        "POST",
-        f"{report_writer_agent['endpoint']}/invoke",
-        json=analysis_artifact,
-    )
+    report_writer_agent = resolve_required_agent("report.write")
+    report_artifact = invoke_agent(report_writer_agent, analysis_artifact)
 
     print("agentarium MVP demo complete")
     print(f"reader-agent endpoint: {reader_agent['endpoint']}")
