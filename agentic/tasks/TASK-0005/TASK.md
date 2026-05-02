@@ -6,7 +6,7 @@
 Use the next available `TASK-####` identifier from the existing set under `agentic/tasks/` whose basename matches `TASK-####` or starts with `TASK-####-`.
 
 ## Status
-`draft`
+`review`
 
 When a task is first opened, start at `draft`. Move to `ready` only after explicit approval to begin implementation. Move to `in_progress` only when Builder-Organizer actually begins execution. Use `done` only when the task is actually complete. When a task reaches `done`, clear the task-level `next_actor` in `tasks.yaml` to `null`.
 
@@ -138,11 +138,16 @@ Runtime coordination belongs in `state.yaml`, `tasks.yaml`, and task-local hando
 
 This task should improve clarity of the current demo script, not define a workflow product.
 
+Approved and implemented on `feature/task-0005-clarify-orchestrator-flow`.
+
 ## Open Questions
-Questions to resolve before implementation:
-- should the demo keep each step as explicit code, or use a tiny ordered list of steps
-- whether adding a helper-level unit test is worth the added mocking
-- whether README wording needs any change if the commands and behavior remain the same
+Resolved before implementation:
+- keep each orchestration step explicit
+- use tiny helpers only for repeated capability resolution and invocation
+- skip helper-level unit tests unless implementation introduces meaningful branching
+- avoid README changes unless output, commands, or flow wording changes
+
+Implementation is ready for review.
 
 ## Rollout Notes
 Local-only MVP slice. No production rollout.
