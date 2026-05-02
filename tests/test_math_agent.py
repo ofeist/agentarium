@@ -1,31 +1,25 @@
-from fastapi.testclient import TestClient
-
 from conftest import load_app_module
 
 
 def test_math_agent_invoke_computes_basic_numeric_metrics():
     math_agent = load_app_module("math_agent_app", "agents/math-agent/app.py")
-    client = TestClient(math_agent.app)
-
-    response = client.post(
-        "/invoke",
-        json={
-            "artifact_type": "table",
-            "columns": ["region", "sales"],
-            "rows": [
+    response = math_agent.invoke(
+        math_agent.TableArtifact(
+            artifact_type="table",
+            columns=["region", "sales"],
+            rows=[
                 {"region": "A", "sales": 100},
                 {"region": "B", "sales": 80},
             ],
-            "metadata": {
+            metadata={
                 "row_count": 2,
                 "column_count": 2,
                 "source_format": "csv",
             },
-        },
+        )
     )
 
-    assert response.status_code == 200
-    body = response.json()
+    body = response.model_dump(mode="json")
     assert body["artifact_type"] == "analysis"
     assert body["metrics"]["row_count"] == 2
     assert body["metrics"]["numeric_columns"]["sales"] == {

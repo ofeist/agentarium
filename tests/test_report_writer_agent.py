@@ -1,4 +1,5 @@
-from fastapi.testclient import TestClient
+import pytest
+from pydantic import ValidationError
 
 from conftest import load_app_module
 
@@ -8,13 +9,11 @@ def test_report_writer_agent_formats_analysis_artifact():
         "report_writer_agent_app",
         "agents/report-writer-agent/app.py",
     )
-    client = TestClient(report_writer_agent.app)
 
-    response = client.post(
-        "/invoke",
-        json={
-            "artifact_type": "analysis",
-            "metrics": {
+    response = report_writer_agent.invoke(
+        report_writer_agent.AnalysisArtifact(
+            artifact_type="analysis",
+            metrics={
                 "row_count": 3,
                 "numeric_columns": {
                     "sales": {
@@ -26,20 +25,19 @@ def test_report_writer_agent_formats_analysis_artifact():
                     }
                 },
             },
-            "findings": [
+            findings=[
                 "Column sales has average 100 across 3 numeric values."
             ],
-            "metadata": {
+            metadata={
                 "source_artifact_type": "table",
                 "row_count": 3,
                 "numeric_column_count": 1,
                 "finding_count": 1,
             },
-        },
+        )
     )
 
-    assert response.status_code == 200
-    assert response.json() == {
+    assert response.model_dump(mode="json") == {
         "artifact_type": "report",
         "summary": "Analyzed 3 rows across 1 numeric columns.",
         "sections": [
@@ -66,21 +64,16 @@ def test_report_writer_agent_rejects_non_analysis_artifact():
         "report_writer_agent_app_invalid",
         "agents/report-writer-agent/app.py",
     )
-    client = TestClient(report_writer_agent.app)
 
-    response = client.post(
-        "/invoke",
-        json={
-            "artifact_type": "table",
-            "metrics": {"row_count": 0, "numeric_columns": {}},
-            "findings": [],
-            "metadata": {
+    with pytest.raises(ValidationError):
+        report_writer_agent.AnalysisArtifact(
+            artifact_type="table",
+            metrics={"row_count": 0, "numeric_columns": {}},
+            findings=[],
+            metadata={
                 "source_artifact_type": "table",
                 "row_count": 0,
                 "numeric_column_count": 0,
                 "finding_count": 0,
             },
-        },
-    )
-
-    assert response.status_code == 422
+        )

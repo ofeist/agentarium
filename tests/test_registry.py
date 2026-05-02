@@ -1,4 +1,5 @@
-from fastapi.testclient import TestClient
+import pytest
+from pydantic import ValidationError
 
 from conftest import load_app_module
 
@@ -31,45 +32,43 @@ def agent_payload(**overrides):
 def test_registry_search_returns_matching_agents_by_capability():
     registry = load_app_module("registry_app", "registry/app.py")
     registry.AGENTS.clear()
-    client = TestClient(registry.app)
 
-    client.post("/agents", json=agent_payload()).raise_for_status()
-    client.post(
-        "/agents",
-        json=agent_payload(
-            name="math-agent",
-            description="Computes basic numeric metrics.",
-            endpoint="http://math-agent:8002",
-            capabilities=["analyze.basic-math"],
-            system_prompt="Analyze table artifacts.",
-            input_schema={"artifact_type": "table"},
-            output_schema={"artifact_type": "analysis"},
-        ),
-    ).raise_for_status()
+    registry.register_agent(registry.AgentRegistration(**agent_payload()))
+    registry.register_agent(
+        registry.AgentRegistration(
+            **agent_payload(
+                name="math-agent",
+                description="Computes basic numeric metrics.",
+                endpoint="http://math-agent:8002",
+                capabilities=["analyze.basic-math"],
+                system_prompt="Analyze table artifacts.",
+                input_schema={"artifact_type": "table"},
+                output_schema={"artifact_type": "analysis"},
+            )
+        )
+    )
 
-    response = client.get("/search", params={"capability": "read.tabular"})
+    matches = registry.search_agents(capability="read.tabular")
 
-    assert response.status_code == 200
-    assert response.json() == [agent_payload()]
+    assert [agent.model_dump(mode="json") for agent in matches] == [agent_payload()]
 
 
 def test_registry_registration_stores_metadata_and_config_fields():
     registry = load_app_module("registry_app_config", "registry/app.py")
     registry.AGENTS.clear()
-    client = TestClient(registry.app)
 
-    response = client.post(
-        "/agents",
-        json=agent_payload(
-            interaction_mode="both",
-            tool_refs=["calculator"],
-            model="gpt-example",
-            limits={"timeout": 20, "max_steps": 3},
-        ),
+    response = registry.register_agent(
+        registry.AgentRegistration(
+            **agent_payload(
+                interaction_mode="both",
+                tool_refs=["calculator"],
+                model="gpt-example",
+                limits={"timeout": 20, "max_steps": 3},
+            )
+        )
     )
 
-    assert response.status_code == 200
-    body = response.json()
+    body = response.model_dump(mode="json")
     assert body["name"] == "reader-agent"
     assert body["description"] == "Reads inline CSV text."
     assert body["capabilities"] == ["read.tabular"]
@@ -86,11 +85,8 @@ def test_registry_registration_stores_metadata_and_config_fields():
 def test_registry_rejects_unknown_interaction_mode():
     registry = load_app_module("registry_app_interaction_mode", "registry/app.py")
     registry.AGENTS.clear()
-    client = TestClient(registry.app)
 
-    response = client.post(
-        "/agents",
-        json=agent_payload(interaction_mode="background-daemon"),
-    )
-
-    assert response.status_code == 422
+    with pytest.raises(ValidationError):
+        registry.AgentRegistration(
+            **agent_payload(interaction_mode="background-daemon")
+        )

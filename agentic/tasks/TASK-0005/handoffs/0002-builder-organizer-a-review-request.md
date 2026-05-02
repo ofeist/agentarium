@@ -9,6 +9,7 @@
 
 ## What changed
 - replaced repeated orchestrator lookup/invoke blocks with `resolve_required_agent()` and `invoke_agent()`
+- fixed the pytest hang by removing FastAPI `TestClient` from service-level tests and calling local handlers/models directly
 - kept the three composition steps explicit:
   - `read.tabular`
   - `analyze.basic-math`
@@ -18,13 +19,12 @@
 - did not add unit tests because the helpers are thin HTTP wrappers and the Compose demo verifies the real flow
 
 ## Verification completed
+- `pytest -q`
 - `python3 -m py_compile orchestrator/run_demo.py`
 - `docker compose config`
 - `docker compose up --build -d`
 - `docker compose run --rm orchestrator`
 - `docker compose down`
-
-`timeout 30s pytest -q` timed out locally with no output, consistent with the recent local pytest caveat. No pytest failure was observed.
 
 ## Review focus
 - confirm the flow remains explicit and registry-driven
