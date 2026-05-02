@@ -133,10 +133,13 @@ Runtime coordination belongs in `state.yaml`, `tasks.yaml`, and task-local hando
 This task should make runtime type explicit, not implement runtime selection.
 
 ## Open Questions
-Questions to resolve before implementation:
-- should the placeholder YAML files under `registry/agents/` be corrected from `generic-llm-agent` to `packaged-agent` for the three current FastAPI services
-- should `runtime_type` be required in the live registration payload, or default to `packaged-agent` for backward compatibility
-- should `runtime_type` be grouped with registry metadata in docs/tests, since it describes execution style rather than prompt/config behavior
+Resolved before implementation:
+- correct only the `runtime_type` field in `registry/agents/*.yaml` from `generic-llm-agent` to `packaged-agent` for the three current FastAPI services
+- do not broaden the YAML cleanup beyond `runtime_type`; the prompt-oriented YAML shape remains out of scope
+- make `runtime_type` required in the live registration payload
+- reject missing or invalid `runtime_type` through validation
+- group `runtime_type` with registry metadata in docs/tests because it describes execution/hosting style, not prompt/config behavior
+- keep `runtime_type` descriptive only; validate and echo it, but do not branch runtime behavior on it
 
 ## Rollout Notes
 Local-only MVP slice. No production rollout.
