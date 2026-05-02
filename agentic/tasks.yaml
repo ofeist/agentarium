@@ -59,3 +59,13 @@ tasks:
     worktree: "worktrees/agentarium-task-0006-builder-organizer-a"
     next_actor: null
     next_action: "Completed"
+  - id: "TASK-0007"
+    title: "Normalize agent metadata files to match live registry records"
+    status: "draft"
+    owner: "builder-organizer-a"
+    participants:
+      - "builder-organizer-a"
+    branch: "feature/task-0007-normalize-agent-metadata"
+    worktree: "worktrees/agentarium-task-0007-builder-organizer-a"
+    next_actor: null
+    next_action: "Awaiting approval to move to ready"
