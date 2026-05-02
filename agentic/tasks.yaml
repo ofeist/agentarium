@@ -39,3 +39,13 @@ tasks:
     worktree: "worktrees/agentarium-task-0004-builder-organizer-a"
     next_actor: null
     next_action: "Completed"
+  - id: "TASK-0005"
+    title: "Clarify orchestrator composition flow"
+    status: "draft"
+    owner: "builder-organizer-a"
+    participants:
+      - "builder-organizer-a"
+    branch: "feature/task-0005-clarify-orchestrator-flow"
+    worktree: "worktrees/agentarium-task-0005-builder-organizer-a"
+    next_actor: null
+    next_action: "Awaiting approval to move to ready"
