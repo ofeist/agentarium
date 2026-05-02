@@ -42,6 +42,7 @@ def register_agents() -> None:
             "endpoint": READER_URL,
             "capabilities": ["read.tabular"],
             "interaction_mode": "callable",
+            "runtime_type": "packaged-agent",
             "system_prompt": "Parse inline CSV into a structured table artifact.",
             "input_schema": {
                 "type": "csv_text",
@@ -62,6 +63,7 @@ def register_agents() -> None:
             "endpoint": MATH_URL,
             "capabilities": ["analyze.basic-math"],
             "interaction_mode": "callable",
+            "runtime_type": "packaged-agent",
             "system_prompt": "Analyze numeric columns in a table artifact.",
             "input_schema": {
                 "artifact_type": "table",
@@ -82,6 +84,7 @@ def register_agents() -> None:
             "endpoint": REPORT_WRITER_URL,
             "capabilities": ["report.write"],
             "interaction_mode": "callable",
+            "runtime_type": "packaged-agent",
             "system_prompt": "Format analysis artifacts into deterministic report artifacts.",
             "input_schema": {
                 "artifact_type": "analysis",

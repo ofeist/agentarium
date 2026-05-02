@@ -17,4 +17,4 @@ spec:
   a2a:
     role: reader
     exposed: true
-  runtime_type: generic-llm-agent
+  runtime_type: packaged-agent
