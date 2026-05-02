@@ -12,6 +12,7 @@ def agent_payload(**overrides):
         "endpoint": "http://reader-agent:8001",
         "capabilities": ["read.tabular"],
         "interaction_mode": "callable",
+        "runtime_type": "packaged-agent",
         "system_prompt": "Parse inline CSV into a table artifact.",
         "input_schema": {
             "type": "csv_text",
@@ -73,6 +74,7 @@ def test_registry_registration_stores_metadata_and_config_fields():
     assert body["description"] == "Reads inline CSV text."
     assert body["capabilities"] == ["read.tabular"]
     assert body["interaction_mode"] == "both"
+    assert body["runtime_type"] == "packaged-agent"
     assert body["endpoint"] == "http://reader-agent:8001"
     assert body["system_prompt"] == "Parse inline CSV into a table artifact."
     assert body["input_schema"]["type"] == "csv_text"
@@ -89,4 +91,22 @@ def test_registry_rejects_unknown_interaction_mode():
     with pytest.raises(ValidationError):
         registry.AgentRegistration(
             **agent_payload(interaction_mode="background-daemon")
+        )
+
+
+def test_registry_rejects_missing_runtime_type():
+    registry = load_app_module("registry_app_missing_runtime_type", "registry/app.py")
+    payload = agent_payload()
+    payload.pop("runtime_type")
+
+    with pytest.raises(ValidationError):
+        registry.AgentRegistration(**payload)
+
+
+def test_registry_rejects_unknown_runtime_type():
+    registry = load_app_module("registry_app_runtime_type", "registry/app.py")
+
+    with pytest.raises(ValidationError):
+        registry.AgentRegistration(
+            **agent_payload(runtime_type="container-image")
         )

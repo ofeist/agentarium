@@ -78,6 +78,7 @@ Each agent record contains only the minimum needed for discovery:
 - `endpoint`
 - `capabilities`
 - `interaction_mode`
+- `runtime_type`
 
 The registry record also carries minimal agent configuration:
 - `system_prompt`
@@ -93,6 +94,7 @@ Agent configuration describes how the agent should behave at runtime.
 Registration stores the agent base endpoint URL, not the `/invoke` path.
 Capability search returns a list of matching agents.
 For now, `interaction_mode` is descriptive metadata only: `callable`, `conversational`, or `both`.
+For now, `runtime_type` is descriptive metadata only: `packaged-agent` or `generic-llm-agent`.
 The current runtime only invokes callable HTTP agents.
 
 ## Minimal artifact contract
@@ -107,6 +109,7 @@ Agent registration:
   "endpoint": "http://reader-agent:8001",
   "capabilities": ["read.tabular"],
   "interaction_mode": "callable",
+  "runtime_type": "packaged-agent",
   "system_prompt": "Parse inline CSV into a structured table artifact.",
   "input_schema": {
     "type": "csv_text",

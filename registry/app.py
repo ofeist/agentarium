@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field, field_validator
 app = FastAPI(title="agentarium-registry")
 
 InteractionMode = Literal["callable", "conversational", "both"]
+RuntimeType = Literal["packaged-agent", "generic-llm-agent"]
 
 
 class AgentLimits(BaseModel):
@@ -22,6 +23,7 @@ class AgentRegistration(BaseModel):
     endpoint: str = Field(min_length=1)
     capabilities: list[str] = Field(min_length=1)
     interaction_mode: InteractionMode = "callable"
+    runtime_type: RuntimeType
 
     # Agent config fields describe how the agent should behave at runtime.
     system_prompt: str = Field(min_length=1)

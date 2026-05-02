@@ -16,4 +16,4 @@ spec:
   a2a:
     role: report-writer
     exposed: true
-  runtime_type: generic-llm-agent
+  runtime_type: packaged-agent

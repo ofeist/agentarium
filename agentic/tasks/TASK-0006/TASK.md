@@ -6,7 +6,7 @@
 Use the next available `TASK-####` identifier from the existing set under `agentic/tasks/` whose basename matches `TASK-####` or starts with `TASK-####-`.
 
 ## Status
-`draft`
+`review`
 
 When a task is first opened, start at `draft`. Move to `ready` only after explicit approval to begin implementation. Move to `in_progress` only when Builder-Organizer actually begins execution. Use `done` only when the task is actually complete. When a task reaches `done`, clear the task-level `next_actor` in `tasks.yaml` to `null`.
 
@@ -132,6 +132,8 @@ Runtime coordination belongs in `state.yaml`, `tasks.yaml`, and task-local hando
 
 This task should make runtime type explicit, not implement runtime selection.
 
+Approved and implemented on `feature/task-0006-runtime-type`.
+
 ## Open Questions
 Resolved before implementation:
 - correct only the `runtime_type` field in `registry/agents/*.yaml` from `generic-llm-agent` to `packaged-agent` for the three current FastAPI services
@@ -140,6 +142,8 @@ Resolved before implementation:
 - reject missing or invalid `runtime_type` through validation
 - group `runtime_type` with registry metadata in docs/tests because it describes execution/hosting style, not prompt/config behavior
 - keep `runtime_type` descriptive only; validate and echo it, but do not branch runtime behavior on it
+
+Implementation is ready for review.
 
 ## Rollout Notes
 Local-only MVP slice. No production rollout.

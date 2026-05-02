@@ -53,6 +53,7 @@ The current registry record includes:
 - `description`
 - `endpoint`
 - `interaction_mode`
+- `runtime_type`
 - `system_prompt`
 - `capabilities`
 - `input_schema`
@@ -75,6 +76,8 @@ A useful agent record should describe:
 - what runtime limits apply
 
 For this MVP slice, `input_schema` and `output_schema` are descriptive only, not full JSON Schema.
+
+For this MVP slice, `runtime_type` is descriptive only. The current values are `packaged-agent` and `generic-llm-agent`, but runtime behavior does not branch on this field yet.
 
 ## Interaction modes
 
